@@ -7,13 +7,23 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigation = useNavigation();
+
+  const handleRegisterPress = () => {
+    navigation.navigate("Register");
+  };
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Welcome Back</Text>
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
@@ -35,7 +45,7 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={handleRegisterPress}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Create an Account</Text>
@@ -53,6 +63,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  titleContainer: {
+    position: "absolute",
+    top: "15%",
+    left: 0,
+    width: "100%",
+    paddingHorizontal: "10%",
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+  },
   inputContainer: {
     width: "80%",
   },
@@ -60,7 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 8,
   },
   buttonContainer: {
