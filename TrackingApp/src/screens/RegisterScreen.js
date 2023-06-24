@@ -10,13 +10,9 @@ import {
 } from "react-native";
 import React from "react";
 
-const dismissKeyboard = () => {
-  Keyboard.dismiss();
-};
-
 const RegisterScreen = () => {
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Create Account</Text>

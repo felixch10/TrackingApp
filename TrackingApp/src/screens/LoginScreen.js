@@ -7,23 +7,40 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { firebase } from "../services/FirebaseService";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleRegisterPress = () => {
-    navigation.navigate("Register");
+  const alertHandler = () => {
+    Alert.alert(
+      "Invalid Credentials",
+      "User not found. Please check your email and password.",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
+  loginUser = async (email, password) => {
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      alertHandler();
+    }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Welcome Back</Text>
@@ -31,25 +48,30 @@ const LoginScreen = () => {
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Email"
-            // value={email}
-            // onChangeText={(text) => setEmail(text)}
+            onChangeText={(email) => setEmail(email)}
+            autoCapitalize="none"
+            autoCorrect={false}
             style={styles.input}
           />
           <TextInput
             placeholder="Password"
-            // value={password}
-            // onChangeText={(text) => setPassword(text)}
+            onChangeText={(password) => setPassword(password)}
+            autoCapitalize="none"
+            autoCorrect={false}
             style={styles.input}
-            secureTextEntry
+            secureTextEntry={true}
           />
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => {}} style={styles.button}>
+          <TouchableOpacity
+            onPress={() => loginUser(email, password)}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={handleRegisterPress}
+            onPress={() => navigation.navigate("Register")}
             style={[styles.button, styles.buttonOutline]}
           >
             <Text style={styles.buttonOutlineText}>Create an Account</Text>
