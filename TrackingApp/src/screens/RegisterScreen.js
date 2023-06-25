@@ -7,10 +7,92 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { firebase } from "../services/FirebaseService";
 
 const RegisterScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const verificationAlertHandler = () => {
+    Alert.alert(
+      "Verify Email",
+      "Verification email sent, please check the spam folder",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const errorAlertHandler = () => {
+    Alert.alert(
+      "Sign Up Error",
+      "Please make sure all credentials are filled.",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  const existingEmailHandler = () => {
+    Alert.alert(
+      "Sign Up Error",
+      "Email already exists.",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  registerUser = async (email, password, firstName, lastName) => {
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.sendEmailVerification({
+            handleCodeInApp: true,
+            url: "https://tracking-app-94ef7.firebaseapp.com",
+          })
+          .then(() => {
+            verificationAlertHandler();
+          })
+          .catch((error) => {
+            errorAlertHandler();
+          })
+          .then(() => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser.uid)
+              .set({
+                firstName,
+                lastName,
+                email,
+              });
+          })
+          .catch((error) => {
+            errorAlertHandler();
+          });
+      })
+      .catch((error) => {
+        existingEmailHandler();
+      });
+  };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -20,33 +102,36 @@ const RegisterScreen = () => {
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="First Name"
-            //   value={}
-            //   onChangeText={(text) => setEmail(text)}
+            onChangeText={(firstName) => setFirstName(firstName)}
             style={styles.input}
+            autoCorrect={false}
           />
           <TextInput
             placeholder="Last Name"
-            //   value={}
-            //   onChangeText={(text) => setEmail(text)}
+            onChangeText={(lastName) => setLastName(lastName)}
             style={styles.input}
+            autoCorrect={false}
           />
           <TextInput
             placeholder="Email"
-            //   value={}
-            //   onChangeText={(text) => setEmail(text)}
+            onChangeText={(email) => setEmail(email)}
             style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
           />
           <TextInput
             placeholder="Password"
-            //   value={}
-            //   onChangeText={(text) => setPassword(text)}
+            onChangeText={(password) => setPassword(password)}
             style={styles.input}
-            secureTextEntry
+            secureTextEntry={true}
+            autoCorrect={false}
+            autoCapitalize="none"
           />
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => registerUser(email, password, firstName, lastName)}
             style={[styles.button, styles.buttonOutline]}
           >
             <Text style={styles.buttonOutlineText}>Sign Up</Text>
