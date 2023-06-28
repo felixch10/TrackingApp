@@ -31,12 +31,51 @@ const LoginScreen = () => {
     );
   };
 
+  const resetEmailAlertHandler = () => {
+    Alert.alert(
+      "Password Reset",
+      "An email has been sent to the registered email, please check the spam folder",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const nonExistingEmailHandler = () => {
+    Alert.alert(
+      "Password Reset Error",
+      "The email that you have entered does not exist.",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   loginUser = async (email, password) => {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       alertHandler();
     }
+  };
+
+  //forget password
+  const forgetPassword = () => {
+    firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        resetEmailAlertHandler();
+      })
+      .catch((error) => {
+        nonExistingEmailHandler();
+      });
   };
 
   return (
@@ -62,6 +101,12 @@ const LoginScreen = () => {
             style={styles.input}
             secureTextEntry={true}
           />
+          <TouchableOpacity
+            style={styles.forgotButton}
+            onPress={() => forgetPassword()}
+          >
+            <Text>Forgot Password?</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -111,6 +156,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 30,
     marginTop: 8,
+  },
+  forgotButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 5,
   },
   buttonContainer: {
     width: "60%",
