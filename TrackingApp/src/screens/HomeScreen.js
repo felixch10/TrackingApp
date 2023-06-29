@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { firebase } from "../services/FirebaseService";
+import * as Location from "expo-location";
+import LocationTracking from "../components/LocationTracking";
 
 const HomeScreen = () => {
   const [name, setName] = useState("");
@@ -55,8 +57,13 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <LocationTracking />
       <Text style={styles.text}>Welcome Back, {name.firstName}</Text>
       <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button2} onPress={() => {}}>
+          <Text style={styles.buttonText}>Track Location</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.button2}
           onPress={() => changePassword()}
