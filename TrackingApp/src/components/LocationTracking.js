@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 
 const LocationTracking = () => {
-  const [location, setLocation] = useState();
   const [latitude, setLatitude] = useState();
   const [longitude, setLongtitude] = useState();
   const [country, setCountry] = useState();
@@ -25,9 +24,20 @@ const LocationTracking = () => {
       console.log(longitude);
     };
     getPermissions();
+    reverseGeocode();
   }, []);
 
-  const reverseGeocode = () => {};
+  const reverseGeocode = async () => {
+    const reverseGeocodedAddress = await Location.reverseGeocodeAsync({
+      longitude: longitude,
+      latitude: latitude,
+    });
+    if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
+      const country = reverseGeocodedAddress[0].country;
+      setCountry(country);
+      console.log(country);
+    }
+  };
 };
 
 export default LocationTracking;
