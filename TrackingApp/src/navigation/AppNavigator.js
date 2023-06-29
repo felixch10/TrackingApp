@@ -6,6 +6,7 @@ import { firebase } from "../services/FirebaseService";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import { LocationProvider } from "../components/LocationContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,8 +56,10 @@ const AppNavigator = () => {
 
 export default () => {
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <LocationProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </LocationProvider>
   );
 };

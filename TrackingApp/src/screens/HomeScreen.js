@@ -6,13 +6,29 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { firebase } from "../services/FirebaseService";
-import * as Location from "expo-location";
 import LocationTracking from "../components/LocationTracking";
+import {
+  LocationProvider,
+  LocationContext,
+} from "../components/LocationContext";
 
 const HomeScreen = () => {
   const [name, setName] = useState("");
+
+  const {
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    country,
+    setCountry,
+    totalDays,
+    setTotalDays,
+    inCanadaDays,
+    setInCanadaDays,
+  } = useContext(LocationContext);
 
   const resetEmailAlertHandler = () => {
     Alert.alert(
@@ -49,7 +65,6 @@ const HomeScreen = () => {
         if (snapshot.exists) {
           setName(snapshot.data());
         } else {
-          //todo
           alert(alert.message);
         }
       });
@@ -59,6 +74,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <LocationTracking />
       <Text style={styles.text}>Welcome Back, {name.firstName}</Text>
+      <Text>{country}</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button2} onPress={() => {}}>
           <Text style={styles.buttonText}>Track Location</Text>

@@ -1,11 +1,22 @@
 import { Alert } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import * as Location from "expo-location";
+import Constants from "expo-constants";
+import { LocationProvider, LocationContext } from "./LocationContext";
 
 const LocationTracking = () => {
-  const [latitude, setLatitude] = useState();
-  const [longitude, setLongtitude] = useState();
-  const [country, setCountry] = useState();
+  const {
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude,
+    country,
+    setCountry,
+    totalDays,
+    setTotalDays,
+    inCanadaDays,
+    setInCanadaDays,
+  } = useContext(LocationContext);
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -19,25 +30,29 @@ const LocationTracking = () => {
       let currentLocation = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = currentLocation.coords;
       setLatitude(latitude);
-      setLongtitude(longitude);
+      setLongitude(longitude);
       console.log(latitude);
       console.log(longitude);
     };
+
     getPermissions();
-    reverseGeocode();
   }, []);
 
-  const reverseGeocode = async () => {
-    const reverseGeocodedAddress = await Location.reverseGeocodeAsync({
-      longitude: longitude,
-      latitude: latitude,
-    });
-    if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
-      const country = reverseGeocodedAddress[0].country;
-      setCountry(country);
-      console.log(country);
-    }
-  };
+  useEffect(() => {
+    const reverseGeocode = async () => {
+      const reverseGeocodedAddress = await Location.reverseGeocodeAsync({
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+      });
+      if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
+        const country = reverseGeocodedAddress[0].country;
+        setCountry(country);
+        console.log(country);
+      }
+    };
+
+    reverseGeocode();
+  }, [latitude, longitude]);
 };
 
 export default LocationTracking;

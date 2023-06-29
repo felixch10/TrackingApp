@@ -82,6 +82,8 @@ const RegisterScreen = () => {
                 firstName,
                 lastName,
                 email,
+                "Tracking (days)": 0,
+                "In Canada (days)": 0,
               });
           })
           .catch((error) => {
