@@ -6,8 +6,9 @@ const LocationProvider = ({ children }) => {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [country, setCountry] = useState();
-  const [totalDays, setTotalDays] = useState();
-  const [inCanadaDays, setInCanadaDays] = useState();
+  const [totalDays, setTotalDays] = useState(0);
+  const [inCanadaDays, setInCanadaDays] = useState(0);
+
   return (
     <LocationContext.Provider
       value={{

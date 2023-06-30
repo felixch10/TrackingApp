@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { firebase } from "../services/FirebaseService";
+import { LocationProvider, LocationContext } from "./LocationContext";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
@@ -82,8 +83,6 @@ const RegisterScreen = () => {
                 firstName,
                 lastName,
                 email,
-                "Tracking (days)": 0,
-                "In Canada (days)": 0,
               });
           })
           .catch((error) => {

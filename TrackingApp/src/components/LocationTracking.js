@@ -12,10 +12,6 @@ const LocationTracking = () => {
     setLongitude,
     country,
     setCountry,
-    totalDays,
-    setTotalDays,
-    inCanadaDays,
-    setInCanadaDays,
   } = useContext(LocationContext);
 
   useEffect(() => {
