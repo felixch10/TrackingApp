@@ -9,15 +9,20 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { firebase } from "../services/FirebaseService";
-import { LocationProvider, LocationContext } from "./LocationContext";
+import {
+  LocationProvider,
+  LocationContext,
+} from "../components/LocationContext";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  const { totalDays, inCanadaDays } = useContext(LocationContext);
 
   const verificationAlertHandler = () => {
     Alert.alert(
@@ -83,6 +88,8 @@ const RegisterScreen = () => {
                 firstName,
                 lastName,
                 email,
+                totalDays,
+                inCanadaDays,
               });
           })
           .catch((error) => {

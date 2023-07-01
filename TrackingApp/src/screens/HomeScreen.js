@@ -19,11 +19,8 @@ const HomeScreen = () => {
 
   const {
     latitude,
-    setLatitude,
     longitude,
-    setLongitude,
     country,
-    setCountry,
     totalDays,
     setTotalDays,
     inCanadaDays,
@@ -55,6 +52,40 @@ const HomeScreen = () => {
       });
   };
 
+  const updateLocation = () => {
+    const userRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid);
+    const currentDate = new Date().toISOString().split("T")[0];
+    const userLocation = {
+      latitude: latitude,
+      longitude: longitude,
+      country: country,
+    };
+
+    setTotalDays(totalDays + 1);
+
+    if (country === "Canada") {
+      setInCanadaDays(inCanadaDays + 1);
+    }
+
+    const updateData = {
+      [currentDate]: userLocation,
+      inCanadaDays: inCanadaDays,
+      totalDays: totalDays,
+    };
+
+    userRef
+      .update(updateData)
+      .then(() => {
+        console.debug("Location updated successfully.");
+      })
+      .catch((error) => {
+        console.error("Error updating location:", error);
+      });
+  };
+
   useEffect(() => {
     firebase
       .firestore()
@@ -76,7 +107,10 @@ const HomeScreen = () => {
       <Text style={styles.text}>Welcome Back, {name.firstName}</Text>
       <Text>{country}</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button2} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.button2}
+          onPress={() => updateLocation()}
+        >
           <Text style={styles.buttonText}>Track Location</Text>
         </TouchableOpacity>
 
