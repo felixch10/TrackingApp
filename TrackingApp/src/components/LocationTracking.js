@@ -27,6 +27,8 @@ const LocationTracking = () => {
       const { latitude, longitude } = currentLocation.coords;
       setLatitude(latitude);
       setLongitude(longitude);
+      console.log(latitude);
+      console.log(longitude);
     };
 
     getPermissions();
@@ -41,11 +43,13 @@ const LocationTracking = () => {
       if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
         const country = reverseGeocodedAddress[0].country;
         setCountry(country);
+        console.log(country);
       }
     };
 
     reverseGeocode();
   }, [latitude, longitude]);
+  return null;
 };
 
 export default LocationTracking;

@@ -19,10 +19,16 @@ import {
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const { totalDays, inCanadaDays } = useContext(LocationContext);
+  const {
+    firstName,
+    setFirstName,
+    totalDays,
+    setTotalDays,
+    setInCanadaDays,
+    inCanadaDays,
+  } = useContext(LocationContext);
 
   const verificationAlertHandler = () => {
     Alert.alert(
@@ -67,6 +73,8 @@ const RegisterScreen = () => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
+        setTotalDays(0);
+        setInCanadaDays(0);
         firebase
           .auth()
           .currentUser.sendEmailVerification({
@@ -88,8 +96,8 @@ const RegisterScreen = () => {
                 firstName,
                 lastName,
                 email,
-                totalDays,
-                inCanadaDays,
+                totalDays: 0,
+                inCanadaDays: 0,
               });
           })
           .catch((error) => {

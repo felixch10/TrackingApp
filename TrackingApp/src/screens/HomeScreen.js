@@ -15,9 +15,9 @@ import {
 } from "../components/LocationContext";
 
 const HomeScreen = () => {
-  const [name, setName] = useState("");
-
   const {
+    firstName,
+    setFirstName,
     latitude,
     longitude,
     country,
@@ -40,6 +40,23 @@ const HomeScreen = () => {
     );
   };
 
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          setFirstName(snapshot.data().firstName);
+          setTotalDays(snapshot.data().totalDays);
+          setInCanadaDays(snapshot.data().inCanadaDays);
+        } else {
+          //alert(alert.message);
+        }
+      });
+  }, []);
+
   const changePassword = () => {
     firebase
       .auth()
@@ -48,7 +65,7 @@ const HomeScreen = () => {
         resetEmailAlertHandler();
       })
       .catch((error) => {
-        alert(error);
+        alert(alert.message);
       });
   };
 
@@ -86,25 +103,12 @@ const HomeScreen = () => {
       });
   };
 
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          setName(snapshot.data());
-        } else {
-          alert(alert.message);
-        }
-      });
-  }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       <LocationTracking />
-      <Text style={styles.text}>Welcome Back, {name.firstName}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Welcome Back, {firstName}</Text>
+      </View>
       <Text>{country}</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -140,8 +144,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  text: {
-    fontSize: 16,
+  titleContainer: {
+    position: "absolute",
+    top: "15%",
+    left: 0,
+    width: "100%",
+    paddingHorizontal: "10%",
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
   },
   buttonContainer: {
     width: "50%",
