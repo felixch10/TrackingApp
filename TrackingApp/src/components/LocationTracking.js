@@ -12,13 +12,27 @@ const LocationTracking = () => {
     setLongitude,
     country,
     setCountry,
+    trackLocationCounter,
+    setTrackLocationCounter,
   } = useContext(LocationContext);
+
+  const locationAlertHandler = () => {
+    Alert.alert(
+      "Location ",
+      "An email has been sent to the registered email, please check the spam folder",
+      [
+        {
+          text: "Dismiss",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   useEffect(() => {
     const getPermissions = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        //console.log("Please grant location permissions");
         //alert(message.alert);
         return;
       }
@@ -27,8 +41,6 @@ const LocationTracking = () => {
       const { latitude, longitude } = currentLocation.coords;
       setLatitude(latitude);
       setLongitude(longitude);
-      console.log(latitude);
-      console.log(longitude);
     };
 
     getPermissions();
@@ -43,7 +55,6 @@ const LocationTracking = () => {
       if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
         const country = reverseGeocodedAddress[0].country;
         setCountry(country);
-        console.log(country);
       }
     };
 

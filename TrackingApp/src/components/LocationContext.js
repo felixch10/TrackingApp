@@ -9,6 +9,7 @@ const LocationProvider = ({ children }) => {
   const [country, setCountry] = useState();
   const [totalDays, setTotalDays] = useState();
   const [inCanadaDays, setInCanadaDays] = useState();
+  const [trackLocationCounter, setTrackLocationCounter] = useState(0);
 
   useEffect(() => {
     setTotalDays(0);
@@ -30,6 +31,8 @@ const LocationProvider = ({ children }) => {
         setTotalDays,
         inCanadaDays,
         setInCanadaDays,
+        trackLocationCounter,
+        setTrackLocationCounter,
       }}
     >
       {children}

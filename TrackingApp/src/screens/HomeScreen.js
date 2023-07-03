@@ -25,9 +25,9 @@ const HomeScreen = () => {
     setTotalDays,
     inCanadaDays,
     setInCanadaDays,
+    trackLocationCounter,
+    setTrackLocationCounter,
   } = useContext(LocationContext);
-
-  const [trackLocationCounter, setTrackLocationCounter] = useState(0);
 
   const resetEmailAlertHandler = () => {
     Alert.alert(
