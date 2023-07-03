@@ -30,6 +30,8 @@ const HomeScreen = () => {
     setTrackLocationCounter,
   } = useContext(LocationContext);
 
+  const [lastTrackedTimestamp, setLastTrackedTimestamp] = useState(null);
+
   const resetEmailAlertHandler = () => {
     Alert.alert(
       "Password Reset",
@@ -60,6 +62,19 @@ const HomeScreen = () => {
       });
   }, []);
 
+  useEffect(() => {
+    const getLastTrackedTimestamp = async () => {
+      try {
+        const timestamp = await AsyncStorage.getItem("lastTrackedTimestamp");
+        setLastTrackedTimestamp(timestamp);
+      } catch (error) {
+        console.error("Error getting last tracked timestamp:", error);
+      }
+    };
+
+    getLastTrackedTimestamp();
+  }, []);
+
   const changePassword = () => {
     firebase
       .auth()
@@ -70,6 +85,38 @@ const HomeScreen = () => {
       .catch((error) => {
         alert(alert.message);
       });
+  };
+
+  const trackLocation = async () => {
+    const currentTimestamp = Date.now();
+    if (
+      !lastTrackedTimestamp ||
+      currentTimestamp - lastTrackedTimestamp >= 1000
+    ) {
+      // Sufficient time has passed, proceed with tracking
+      await updateLocation();
+      setLastTrackedTimestamp(currentTimestamp);
+      try {
+        await AsyncStorage.setItem(
+          "lastTrackedTimestamp",
+          currentTimestamp.toString()
+        );
+      } catch (error) {
+        console.error("Error saving last tracked timestamp:", error);
+      }
+    } else {
+      // Not enough time has passed, show an alert
+      Alert.alert(
+        "Track Location",
+        "You can only track location once every 24 hours.",
+        [
+          {
+            text: "Dismiss",
+          },
+        ],
+        { cancelable: false }
+      );
+    }
   };
 
   const signOut = async () => {
@@ -132,7 +179,7 @@ const HomeScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button2}
-          onPress={() => updateLocation()}
+          onPress={() => trackLocation()}
         >
           <Text style={styles.buttonText}>Track Location</Text>
         </TouchableOpacity>
