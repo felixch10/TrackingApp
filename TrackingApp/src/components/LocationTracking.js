@@ -18,8 +18,8 @@ const LocationTracking = () => {
 
   const locationAlertHandler = () => {
     Alert.alert(
-      "Location ",
-      "An email has been sent to the registered email, please check the spam folder",
+      "Location Error",
+      "Please set Allow Location Access to always",
       [
         {
           text: "Dismiss",
@@ -33,7 +33,7 @@ const LocationTracking = () => {
     const getPermissions = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        //alert(message.alert);
+        locationAlertHandler();
         return;
       }
 
