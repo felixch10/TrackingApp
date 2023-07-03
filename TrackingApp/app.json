@@ -15,7 +15,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      },
+      "supportsTablet": true,
+      "bundleIdentifier": "com.felixch10.TrackingApp"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +32,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0c7a2b00-0113-4af3-be63-a7f4b9bea8bd"
+      }
     }
   }
 }

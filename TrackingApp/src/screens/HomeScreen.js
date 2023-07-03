@@ -13,6 +13,7 @@ import {
   LocationProvider,
   LocationContext,
 } from "../components/LocationContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const {
@@ -71,6 +72,16 @@ const HomeScreen = () => {
       });
   };
 
+  const signOut = async () => {
+    try {
+      await AsyncStorage.setItem("keepLoggedIn", JSON.stringify(false));
+      // Sign out the user
+      await firebase.auth().signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const updateLocation = () => {
     const userRef = firebase
       .firestore()
@@ -125,7 +136,6 @@ const HomeScreen = () => {
         >
           <Text style={styles.buttonText}>Track Location</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.button2}
           onPress={() => changePassword()}
@@ -133,10 +143,7 @@ const HomeScreen = () => {
           <Text style={styles.buttonText}>Change Password</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => firebase.auth().signOut()}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => signOut()}>
           <Text style={styles.buttonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>

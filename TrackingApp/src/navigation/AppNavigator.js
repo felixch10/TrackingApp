@@ -7,27 +7,38 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import { LocationProvider } from "../components/LocationContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+  const [isLogged, setIsLogged] = useState(false);
 
   // Handle user state changes
   function onAuthStateChanged(user) {
     setUser(user);
+    setIsLogged(user !== null);
     if (initializing) setInitializing(false);
   }
 
+  const retrieveData = async () => {
+    try {
+      const data = await AsyncStorage.getItem("keepLoggedIn");
+      setIsLogged(JSON.parse(data));
+    } catch (error) {}
+  };
+
   useEffect(() => {
+    retrieveData();
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
 
   if (initializing) return null;
 
-  if (!user) {
+  if (!user || !isLogged) {
     return (
       <Stack.Navigator>
         <Stack.Screen
