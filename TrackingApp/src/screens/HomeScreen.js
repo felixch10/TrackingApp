@@ -27,6 +27,8 @@ const HomeScreen = () => {
     setInCanadaDays,
   } = useContext(LocationContext);
 
+  const [trackLocationCounter, setTrackLocationCounter] = useState(0);
+
   const resetEmailAlertHandler = () => {
     Alert.alert(
       "Password Reset",
@@ -81,16 +83,20 @@ const HomeScreen = () => {
       country: country,
     };
 
-    setTotalDays(totalDays + 1);
+    let updatedInCanadaDays = inCanadaDays;
+    let updatedTotalDays = totalDays + 1;
 
     if (country === "Canada") {
-      setInCanadaDays(inCanadaDays + 1);
+      updatedInCanadaDays += 1;
     }
+
+    setTotalDays(updatedTotalDays);
+    setInCanadaDays(updatedInCanadaDays);
 
     const updateData = {
       [currentDate]: userLocation,
-      inCanadaDays: inCanadaDays,
-      totalDays: totalDays,
+      inCanadaDays: updatedInCanadaDays,
+      totalDays: updatedTotalDays,
     };
 
     userRef
@@ -101,10 +107,12 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error("Error updating location:", error);
       });
+
+    setTrackLocationCounter(trackLocationCounter + 1);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} key={trackLocationCounter}>
       <LocationTracking />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Welcome Back, {firstName}</Text>
