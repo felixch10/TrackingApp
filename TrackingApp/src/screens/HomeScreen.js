@@ -14,6 +14,8 @@ import {
   LocationContext,
 } from "../components/LocationContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
 
 const HomeScreen = () => {
   const {
@@ -85,6 +87,67 @@ const HomeScreen = () => {
       .catch((error) => {
         alert(alert.message);
       });
+  };
+
+  const html = `
+  <html>
+  <head>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid black;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+  </head>
+  <body>
+  
+  <h2>Time spent outside of Canada</h2>
+  
+  <table>
+    <tr>
+      <th>From Date</th>
+      <th>To Date</th>
+      <th>Your Location during Absence</th>
+      <th>Reason for Absence</th>
+      <th>If Other, Please Add Reason</th>
+      <th>Total Number of Days</th>
+    </tr>
+    <tr>
+      <td>2023-01-01</td>
+      <td>2023-02-15</td>
+      <td>United States</td>
+      <td>Vacation</td>
+      <td></td>
+      <td>46</td>
+    </tr>
+    <tr>
+      <td>2023-03-20</td>
+      <td>2023-04-05</td>
+      <td>Mexico</td>
+      <td>Business Trip</td>
+      <td></td>
+      <td>17</td>
+    </tr>
+  </table>
+  
+  </body>
+  </html>
+  
+  `;
+
+  const downloadPDF = async () => {
+    const file = await printToFileAsync({
+      html: html,
+      base64: false,
+    });
+
+    await shareAsync(file.uri);
   };
 
   const trackLocation = async () => {
@@ -188,6 +251,10 @@ const HomeScreen = () => {
           onPress={() => changePassword()}
         >
           <Text style={styles.buttonText}>Change Password</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button2} onPress={() => downloadPDF()}>
+          <Text style={styles.buttonText}>Download Location</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => signOut()}>
