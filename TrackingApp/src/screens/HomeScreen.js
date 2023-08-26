@@ -91,7 +91,7 @@ const HomeScreen = () => {
     const currentTimestamp = Date.now();
     if (
       !lastTrackedTimestamp ||
-      currentTimestamp - lastTrackedTimestamp >= 1000
+      currentTimestamp - lastTrackedTimestamp >= 1000 * 60
     ) {
       // Sufficient time has passed, proceed with tracking
       await updateLocation();
@@ -175,7 +175,7 @@ const HomeScreen = () => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Welcome Back, {firstName}</Text>
       </View>
-      <Text>{country}</Text>
+      <Text>Currently in: {country}</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button2}
