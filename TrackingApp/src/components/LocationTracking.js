@@ -9,10 +9,8 @@ const LocationTracking = () => {
     setLatitude,
     longitude,
     setLongitude,
-    country,
     setCountry,
-    trackLocationCounter,
-    setTrackLocationCounter,
+    setCity,
   } = useContext(LocationContext);
 
   const locationAlertHandler = () => {
@@ -53,7 +51,9 @@ const LocationTracking = () => {
       });
       if (reverseGeocodedAddress && reverseGeocodedAddress.length > 0) {
         const country = reverseGeocodedAddress[0].country;
+        const city = reverseGeocodedAddress[0].city;
         setCountry(country);
+        setCity(city);
       }
     };
 

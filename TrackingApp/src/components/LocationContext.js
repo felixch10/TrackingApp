@@ -7,6 +7,7 @@ const LocationProvider = ({ children }) => {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [country, setCountry] = useState();
+  const [city, setCity] = useState();
   const [totalDays, setTotalDays] = useState();
   const [inCanadaDays, setInCanadaDays] = useState();
   const [trackLocationCounter, setTrackLocationCounter] = useState(0);
@@ -27,6 +28,8 @@ const LocationProvider = ({ children }) => {
         setLongitude,
         country,
         setCountry,
+        city,
+        setCity,
         totalDays,
         setTotalDays,
         inCanadaDays,

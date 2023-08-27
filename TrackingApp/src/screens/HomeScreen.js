@@ -24,6 +24,7 @@ const HomeScreen = () => {
     latitude,
     longitude,
     country,
+    city,
     totalDays,
     setTotalDays,
     inCanadaDays,
@@ -154,7 +155,7 @@ const HomeScreen = () => {
     const currentTimestamp = Date.now();
     if (
       !lastTrackedTimestamp ||
-      currentTimestamp - lastTrackedTimestamp >= 1000 * 60
+      currentTimestamp - lastTrackedTimestamp >= 1000
     ) {
       // Sufficient time has passed, proceed with tracking
       await updateLocation();
@@ -192,20 +193,30 @@ const HomeScreen = () => {
     }
   };
 
-  const updateLocation = () => {
+  const updateLocation = async () => {
     const userRef = firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid);
+
+    const locationCollection = userRef.collection("locationCollection");
+
+    // Query the subcollection to see if any documents exist
+    const querySnapshot = await locationCollection.get();
+
     const currentDate = new Date().toISOString().split("T")[0];
     const userLocation = {
       latitude: latitude,
       longitude: longitude,
       country: country,
+      city: city,
     };
 
     let updatedInCanadaDays = inCanadaDays;
     let updatedTotalDays = totalDays + 1;
+    const locationData = {
+      [currentDate]: userLocation,
+    };
 
     if (country === "Canada") {
       updatedInCanadaDays += 1;
@@ -215,7 +226,6 @@ const HomeScreen = () => {
     setInCanadaDays(updatedInCanadaDays);
 
     const updateData = {
-      [currentDate]: userLocation,
       inCanadaDays: updatedInCanadaDays,
       totalDays: updatedTotalDays,
     };
@@ -228,6 +238,32 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error("Error updating location:", error);
       });
+
+    if (querySnapshot.empty) {
+      locationCollection
+        .add(locationData)
+        .then(() => {
+          console.debug("New location document created.");
+        })
+        .catch((error) => {
+          console.error("Error creating new location document:", error);
+        });
+    } else {
+      const existingDocumentRef = locationCollection.doc(
+        querySnapshot.docs[0].id
+      );
+      existingDocumentRef
+        .update(locationData)
+        .then(() => {
+          console.debug("Location data updated within existing document.");
+        })
+        .catch((error) => {
+          console.error(
+            "Error updating location data within existing document:",
+            error
+          );
+        });
+    }
 
     setTrackLocationCounter(trackLocationCounter + 1);
   };
