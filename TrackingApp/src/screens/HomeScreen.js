@@ -97,53 +97,71 @@ const HomeScreen = () => {
 
   const html = `
   <html>
-  <head>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      border: 1px solid black;
-    }
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: center;
-    }
-  </style>
-  </head>
-  <body>
-  
-  <h2>Time spent outside of Canada</h2>
-  
-  <table>
-    <tr>
-      <th>From Date</th>
-      <th>To Date</th>
-      <th>Your Location during Absence</th>
-      <th>Reason for Absence</th>
-      <th>If Other, Please Add Reason</th>
-      <th>Total Number of Days</th>
-    </tr>
-    <tr>
-      <td>2023-01-01</td>
-      <td>2023-02-15</td>
-      <td>United States</td>
-      <td>Vacation</td>
-      <td></td>
-      <td>46</td>
-    </tr>
-    <tr>
-      <td>2023-03-20</td>
-      <td>2023-04-05</td>
-      <td>Mexico</td>
-      <td>Business Trip</td>
-      <td></td>
-      <td>17</td>
-    </tr>
-  </table>
-  
-  </body>
-  </html>
+<head>
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid black;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h2>Time spent outside of Canada</h2>
+
+<table>
+  <tr>
+    <th>From Date</th>
+    <th>To Date</th>
+    <th>Your Location during Absence</th>
+    <th>Reason for Absence</th>
+    <th>If Other, Please Add Reason</th>
+    <th>Total Number of Days</th>
+  </tr>
+  <tr>
+    <td>2023-08-12</td>
+    <td>2023-08-15</td>
+    <td>Vancouver, Canada</td>
+    <td></td>
+    <td></td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>2023-08-20</td>
+    <td>2023-08-28</td>
+    <td>Coquitlam, Canada</td>
+    <td></td>
+    <td></td>
+    <td>8</td>
+  </tr>
+  <tr>
+    <td colspan="5" style="text-align: right;"><strong>Total Days Outside Canada:</strong></td>
+    <td id="totalDaysCell">0</td>
+  </tr>
+</table>
+
+<script>
+  // Calculate the total number of days and update the content of the totalDaysCell
+  const totalDaysCell = document.getElementById("totalDaysCell");
+  let totalDays = 0;
+
+  const rows = document.querySelectorAll("table tr:not(:first-child):not(:last-child)");
+  rows.forEach(row => {
+    const daysCell = row.querySelector("td:last-child");
+    totalDays += parseInt(daysCell.textContent);
+  });
+
+  totalDaysCell.textContent = totalDays;
+</script>
+
+</body>
+</html>
   
   `;
 
