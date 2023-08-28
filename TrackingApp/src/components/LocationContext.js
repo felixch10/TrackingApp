@@ -7,9 +7,11 @@ const LocationProvider = ({ children }) => {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [country, setCountry] = useState();
+  const [previousCountry, setPreviousCountry] = useState("");
   const [city, setCity] = useState();
   const [totalDays, setTotalDays] = useState();
   const [inCanadaDays, setInCanadaDays] = useState();
+  const [outsideCanadaDays, setOutsideCanadaDays] = useState();
   const [trackLocationCounter, setTrackLocationCounter] = useState(0);
 
   useEffect(() => {
@@ -28,12 +30,16 @@ const LocationProvider = ({ children }) => {
         setLongitude,
         country,
         setCountry,
+        previousCountry,
+        setPreviousCountry,
         city,
         setCity,
         totalDays,
         setTotalDays,
         inCanadaDays,
         setInCanadaDays,
+        outsideCanadaDays,
+        setOutsideCanadaDays,
         trackLocationCounter,
         setTrackLocationCounter,
       }}

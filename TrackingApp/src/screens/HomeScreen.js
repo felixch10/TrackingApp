@@ -24,6 +24,8 @@ const HomeScreen = () => {
     latitude,
     longitude,
     country,
+    previousCountry,
+    setPreviousCountry,
     city,
     totalDays,
     setTotalDays,
@@ -31,6 +33,8 @@ const HomeScreen = () => {
     setInCanadaDays,
     trackLocationCounter,
     setTrackLocationCounter,
+    outsideCanadaDays,
+    setOutsideCanadaDays,
   } = useContext(LocationContext);
 
   const [lastTrackedTimestamp, setLastTrackedTimestamp] = useState(null);
@@ -59,6 +63,7 @@ const HomeScreen = () => {
           setFirstName(snapshot.data().firstName);
           setTotalDays(snapshot.data().totalDays);
           setInCanadaDays(snapshot.data().inCanadaDays);
+          setPreviousCountry(snapshot.data().previousCountry);
         } else {
           //alert(alert.message);
         }
@@ -200,9 +205,7 @@ const HomeScreen = () => {
       .doc(firebase.auth().currentUser.uid);
 
     const locationCollection = userRef.collection("locationCollection");
-
-    // Query the subcollection to see if any documents exist
-    const querySnapshot = await locationCollection.get();
+    const previousCountryLocation = previousCountry;
 
     const currentDate = new Date().toISOString().split("T")[0];
     const userLocation = {
@@ -224,45 +227,53 @@ const HomeScreen = () => {
 
     setTotalDays(updatedTotalDays);
     setInCanadaDays(updatedInCanadaDays);
+    setOutsideCanadaDays(updatedTotalDays - updatedInCanadaDays);
+    setPreviousCountry(country);
 
     const updateData = {
       inCanadaDays: updatedInCanadaDays,
       totalDays: updatedTotalDays,
+      outsideCanadaDays: updatedTotalDays - updatedInCanadaDays,
+      previousCountry: country,
     };
 
-    userRef
-      .update(updateData)
-      .then(() => {
-        console.debug("Location updated successfully.");
-      })
-      .catch((error) => {
-        console.error("Error updating location:", error);
-      });
+    try {
+      await userRef.update(updateData);
+      console.debug("Location updated successfully.");
+      console.debug(previousCountryLocation);
+    } catch (error) {
+      console.error("Error updating location:", error);
+    }
 
-    if (querySnapshot.empty) {
-      locationCollection
-        .add(locationData)
-        .then(() => {
-          console.debug("New location document created.");
-        })
-        .catch((error) => {
-          console.error("Error creating new location document:", error);
-        });
-    } else {
-      const existingDocumentRef = locationCollection.doc(
-        querySnapshot.docs[0].id
+    try {
+      // Check if a document named "location history" exists
+      const existingDocSnapshot = await locationCollection
+        .doc("location history")
+        .get();
+
+      if (existingDocSnapshot.exists) {
+        // Update the existing document
+        await locationCollection.doc("location history").update(locationData);
+        console.debug("Location data updated within existing document.");
+      } else {
+        // Create a new document named "location history"
+        await locationCollection.doc("location history").set(locationData);
+        console.debug("New location history document created.");
+      }
+    } catch (error) {
+      console.error(
+        "Error updating or creating location history document:",
+        error
       );
-      existingDocumentRef
-        .update(locationData)
-        .then(() => {
-          console.debug("Location data updated within existing document.");
-        })
-        .catch((error) => {
-          console.error(
-            "Error updating location data within existing document:",
-            error
-          );
-        });
+    }
+
+    try {
+      // Check if a documnet named "location history" exists
+    } catch (error) {
+      console.error(
+        "Error updating or creating location history document:",
+        error
+      );
     }
 
     setTrackLocationCounter(trackLocationCounter + 1);

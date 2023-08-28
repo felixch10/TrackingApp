@@ -27,7 +27,11 @@ const RegisterScreen = () => {
     totalDays,
     setTotalDays,
     setInCanadaDays,
+    previousCountry,
+    setPreviousCountry,
     inCanadaDays,
+    outsideCanadaDays,
+    setOutsideCanadaDays,
   } = useContext(LocationContext);
 
   const verificationAlertHandler = () => {
@@ -75,6 +79,7 @@ const RegisterScreen = () => {
       .then(() => {
         setTotalDays(0);
         setInCanadaDays(0);
+        setOutsideCanadaDays(0);
         firebase
           .auth()
           .currentUser.sendEmailVerification({
@@ -98,6 +103,8 @@ const RegisterScreen = () => {
                 email,
                 totalDays: 0,
                 inCanadaDays: 0,
+                outsideCanadaDays: 0,
+                previousCountry,
               });
           })
           .catch((error) => {
