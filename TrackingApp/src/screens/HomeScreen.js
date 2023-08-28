@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useTransition } from "react";
 import { firebase } from "../services/FirebaseService";
 import LocationTracking from "../components/LocationTracking";
 import {
@@ -38,6 +38,10 @@ const HomeScreen = () => {
   } = useContext(LocationContext);
 
   const [lastTrackedTimestamp, setLastTrackedTimestamp] = useState(null);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const [regionDays, setRegionDays] = useState();
+  const [absenceReason, setAbsenceReason] = useState("");
 
   const resetEmailAlertHandler = () => {
     Alert.alert(
@@ -214,12 +218,15 @@ const HomeScreen = () => {
       country: country,
       city: city,
     };
+    const newOustideCanada = {
+      startDate: currentDate,
+      endDate: currentDate,
+      absenceReason: absenceReason,
+      regionDays: 0,
+    };
 
     let updatedInCanadaDays = inCanadaDays;
     let updatedTotalDays = totalDays + 1;
-    const locationData = {
-      [currentDate]: userLocation,
-    };
 
     if (country === "Canada") {
       updatedInCanadaDays += 1;
@@ -235,6 +242,15 @@ const HomeScreen = () => {
       totalDays: updatedTotalDays,
       outsideCanadaDays: updatedTotalDays - updatedInCanadaDays,
       previousCountry: country,
+    };
+
+    const locationData = {
+      [currentDate]: userLocation,
+    };
+
+    //TODO
+    const newOutsideCanadaData = {
+      [country]: newOustideCanada,
     };
 
     try {
@@ -267,13 +283,18 @@ const HomeScreen = () => {
       );
     }
 
-    try {
-      // Check if a documnet named "location history" exists
-    } catch (error) {
-      console.error(
-        "Error updating or creating location history document:",
-        error
-      );
+    if (country === "Canada" && country === previousCountryLocation) {
+      try {
+        // Check if a documnet named "Outside Canada" exists
+        const existingDocSnapshot = await locationCollection
+          .doc("Outside Canada")
+          .get();
+      } catch (error) {
+        console.error(
+          "Error updating or creating location history document:",
+          error
+        );
+      }
     }
 
     setTrackLocationCounter(trackLocationCounter + 1);
@@ -285,7 +306,9 @@ const HomeScreen = () => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Welcome Back, {firstName}</Text>
       </View>
-      <Text>Currently in: {country}</Text>
+      <Text>
+        Currently in: {city}, {country}
+      </Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button2}
